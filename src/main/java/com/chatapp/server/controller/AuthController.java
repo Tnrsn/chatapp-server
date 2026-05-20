@@ -5,8 +5,10 @@ import com.chatapp.server.dto.RegisterRequest;
 import com.chatapp.server.repository.UserRepository;
 
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -41,17 +43,18 @@ public class AuthController {
     public ResponseEntity<Void> login(@RequestBody RegisterRequest req)
     {
         User user = repo.findByEmail(req.email);
-        
-//        if (user == null) {
-//            return "User not found";
-//        }
 
+        if (user == null) //Return UNAUTHORIZED if user not found
+        {
+        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
         boolean ok = encoder.matches(
             req.password,
             user.getPasswordHash()
         );
 
-        if (!ok || user == null) {
+        if (!ok) { //Return UNAUTHORIZED if wrong password
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
