@@ -1,6 +1,8 @@
 package com.chatapp.server.controller;
 
 import com.chatapp.server.User;
+import com.chatapp.server.auth.LoginResponse;
+import com.chatapp.server.auth.SessionManager;
 import com.chatapp.server.dto.RegisterRequest;
 import com.chatapp.server.repository.UserRepository;
 
@@ -26,6 +28,8 @@ public class AuthController {
     @PostMapping("/register")
     public String register(@RequestBody RegisterRequest req) {
 
+    	System.out.println("Register");
+    	
         User user = new User();
         user.setUsername(req.username);
         user.setEmail(req.email);
@@ -40,10 +44,11 @@ public class AuthController {
     }
     
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody RegisterRequest req)
+    public ResponseEntity<LoginResponse> login(@RequestBody RegisterRequest req)
     {
         User user = repo.findByEmail(req.email);
-
+//    	System.out.println("Login");
+        
         if (user == null) //Return UNAUTHORIZED if user not found
         {
         	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -57,7 +62,24 @@ public class AuthController {
         if (!ok) { //Return UNAUTHORIZED if wrong password
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
-        return ResponseEntity.ok().build();
+        
+        String usertoken = SessionManager.createSession(user.getId());
+        return ResponseEntity.ok(new LoginResponse(usertoken, user.getUsername()));
+    }
+    
+    @GetMapping("/username")
+    public ResponseEntity<String> getUsername(@RequestParam String token)
+    {
+    	UUID userId = SessionManager.getUserId(token);
+    	
+    	if(userId == null)
+    		return ResponseEntity.status(401).body("Invalid Token");
+    	
+    	User user = repo.findById(userId).orElse(null);
+    	
+    	if(user == null)
+    		return ResponseEntity.status(404).body("User not found");
+    	
+    	return ResponseEntity.ok(user.getUsername());
     }
 }
