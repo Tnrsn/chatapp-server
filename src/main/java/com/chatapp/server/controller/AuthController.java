@@ -1,10 +1,10 @@
 package com.chatapp.server.controller;
 
-import com.chatapp.server.User;
 import com.chatapp.server.auth.LoginResponse;
 import com.chatapp.server.auth.SessionManager;
 import com.chatapp.server.dto.RegisterRequest;
-import com.chatapp.server.repository.UserRepository;
+import com.chatapp.server.user.User;
+import com.chatapp.server.user.UserRepository;
 
 import org.springframework.web.bind.annotation.*;
 

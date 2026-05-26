@@ -1,4 +1,4 @@
-package com.chatapp.server;
+package com.chatapp.server.user;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
