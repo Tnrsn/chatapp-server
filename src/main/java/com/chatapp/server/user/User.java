@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -13,6 +15,7 @@ public class User {
     private UUID id;
 
     private String username;
+    @JsonIgnore
     private String passwordHash;
     private String email;
 

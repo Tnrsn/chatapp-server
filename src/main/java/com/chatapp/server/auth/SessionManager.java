@@ -32,20 +32,16 @@ public class SessionManager {
 			return token;
 		}
 		
-		private final UserService userService;
-		
-	    public SessionManager(UserService userService) {
-	        this.userService = userService;
-	    }
+
 		
 		@GetMapping("/validate")
 		public boolean isValid(@RequestParam String token)
 		{
-			List<User> users = userService.searchUsers("tan");
-
-			for (User user : users) {
-			    System.out.println(user.getUsername());
-			}
+//			List<User> users = userService.searchUsers("tan");
+//
+//			for (User user : users) {
+//			    System.out.println(user.getUsername());
+//			}
 			return sessions.containsKey(token);
 		}
 		
