@@ -26,28 +26,21 @@ public class SessionManager {
 		
 		public static String createSession(UUID userId) 
 		{
-			System.out.println("id  " + userId);
 			String token = UUID.randomUUID().toString();
 			sessions.put(token, userId);
+			System.out.println("id = " + userId);
+			System.out.println("token = " + token);
 			return token;
 		}
-		
-
 		
 		@GetMapping("/validate")
 		public boolean isValid(@RequestParam String token)
 		{
-//			List<User> users = userService.searchUsers("tan");
-//
-//			for (User user : users) {
-//			    System.out.println(user.getUsername());
-//			}
 			return sessions.containsKey(token);
 		}
 		
 		public static UUID getUserId(String token) 
 		{
-			System.out.println("This is the token" + token);
 			return sessions.get(token);
 		}
 		

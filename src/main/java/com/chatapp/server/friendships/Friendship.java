@@ -27,4 +27,21 @@ public class Friendship {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+    
+    public Friendship() {}
+    
+    public void setRequesterId(UUID requesterId)
+    {
+    	this.requesterId = requesterId;
+    }
+    
+    public void setReceiverId(UUID receiverId)
+    {
+    	this.receiverId = receiverId;
+    }
+    
+    public void setStatus(String status)
+    {
+    	this.status = status;
+    }
 }

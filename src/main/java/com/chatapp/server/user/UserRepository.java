@@ -17,17 +17,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 	
 	List<User> findByUsernameContainingIgnoreCase(String username);
 	
-	@Query("""
-			SELECT u FROM User u
-			WHERE u.id IN (
-			    SELECT CASE
-			        WHEN f.requesterId = :userId THEN f.receiverId
-			        ELSE f.requesterId
-			    END
-			    FROM Friendship f
-			    WHERE (f.requesterId = :userId OR f.receiverId = :userId)
-			    AND f.status = 'accepted'
-			)
-			""")
-			List<User> findFriends(@Param("userId") UUID userId);
+
 }

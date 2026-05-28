@@ -26,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody RegisterRequest req) {
+    public ResponseEntity<LoginResponse> register(@RequestBody RegisterRequest req) {
 
     	System.out.println("Register");
     	
@@ -40,7 +40,8 @@ public class AuthController {
 
         repo.save(user);
 
-        return "OK";
+        String usertoken = SessionManager.createSession(user.getId());
+        return ResponseEntity.ok(new LoginResponse(usertoken, user.getUsername()));
     }
     
     @PostMapping("/login")
