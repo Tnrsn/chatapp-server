@@ -32,14 +32,12 @@ public class FriendshipManager {
 	@PostMapping("/accept")
 	public void acceptRequest(@RequestParam String token, @RequestParam UUID requesterId)
 	{
-		System.out.println("AAAAAAAAAAAAAAAA");
 		friendshipService.acceptRequest(token, requesterId);
 	}
 	
 	@PostMapping("/decline")
 	public void declineRequest(@RequestParam String token, @RequestParam UUID requesterId)
 	{
-		System.out.println("AAAAAAAAAAAAAAAA");
 		friendshipService.declineRequest(token, requesterId);
 	}
 	
