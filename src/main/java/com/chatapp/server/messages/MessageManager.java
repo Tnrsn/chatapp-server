@@ -18,10 +18,12 @@ import com.chatapp.server.dto.MessageRequest;
 public class MessageManager {
 
     private final MessageService messageService;
+    private final MessageRepository messageRepository;
 
-    public MessageManager(MessageService messageService) 
+    public MessageManager(MessageService messageService, MessageRepository messageRepository) 
     {
         this.messageService = messageService;
+        this.messageRepository = messageRepository;
     }
     
     @PostMapping("/send")
@@ -40,5 +42,14 @@ public class MessageManager {
     	if(userId == null) return null;
     	
         return messageService.getMessages(conversationId, userId);
+    }
+    
+    @GetMapping("/username")
+    public String getUsernameById(@RequestParam String token, @RequestParam UUID id)
+    {
+    	UUID userId = SessionManager.getUserId(token);
+    	if(userId == null) return null;
+    	
+    	return messageRepository.findUsernameById(id);
     }
 }
