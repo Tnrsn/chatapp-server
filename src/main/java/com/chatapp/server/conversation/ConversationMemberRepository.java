@@ -1,4 +1,4 @@
-package com.chatapp.server.conservation;
+package com.chatapp.server.conversation;
 
 import java.util.List;
 import java.util.UUID;

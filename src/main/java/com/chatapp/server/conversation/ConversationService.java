@@ -1,4 +1,4 @@
-package com.chatapp.server.conservation;
+package com.chatapp.server.conversation;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ConversationService {
@@ -19,6 +20,7 @@ public class ConversationService {
 		this.memberRepository = memberRepository;
 	}
 	
+	@Transactional
     public Conversation createDirectConversation(UUID user1, UUID user2) 
     {
         List<ConversationMember> user1Chats = memberRepository.findByUserId(user1);

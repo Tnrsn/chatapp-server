@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.chatapp.server.conservation.ConversationMemberRepository;
+import com.chatapp.server.conversation.ConversationMemberRepository;
 
 @Service
 public class MessageService {
@@ -19,20 +19,16 @@ public class MessageService {
         this.memberRepository = memberRepository;
     }
     
-    public Message sendMessage(UUID conversationId, UUID senderId, String content) 
+    public Message sendMessage(UUID conversationId, UUID senderId, String content, String type) 
     {
         boolean isMember = memberRepository.existsByConversationIdAndUserId(conversationId, senderId);
-
-        if (!isMember) 
-        {
-            throw new RuntimeException("User is not in this conversation");
-        }
-
+        if (!isMember) return null;
+        
         Message msg = new Message();
         msg.setConversationId(conversationId);
         msg.setSenderId(senderId);
         msg.setContent(content);
-        msg.setMessageType("text");
+        msg.setMessageType(type);
         msg.setCreatedAt(LocalDateTime.now());
 
         return messageRepository.save(msg);
@@ -41,11 +37,7 @@ public class MessageService {
     public List<Message> getMessages(UUID conversationId, UUID userId) 
     {
         boolean isMember = memberRepository.existsByConversationIdAndUserId(conversationId, userId);
-
-        if (!isMember) 
-        {
-            throw new RuntimeException("Access denied");
-        }
+        if (!isMember) return null;
 
         return messageRepository.findByConversationIdOrderByCreatedAtAsc(conversationId);
     }

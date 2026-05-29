@@ -1,4 +1,4 @@
-package com.chatapp.server.conservation;
+package com.chatapp.server.conversation;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,7 +26,7 @@ public class ConversationManager {
     public Conversation createDM(@RequestParam String token, @RequestParam UUID user2)
     {
     	UUID user1 = SessionManager.getUserId(token);
-    	if(user1 == null) return null;
+    	if(user1 == null || user1 == user2) return null;
     	
         return conversationService.createDirectConversation(user1, user2);
     }

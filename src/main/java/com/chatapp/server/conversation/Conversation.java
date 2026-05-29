@@ -1,12 +1,11 @@
-package com.chatapp.server.conservation;
+package com.chatapp.server.conversation;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.springframework.data.annotation.Id;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
@@ -20,6 +19,15 @@ public class Conversation {
     private String type; // type of the conversation (direct or community).
     private UUID createdBy;
     private LocalDateTime createdAt;
+    
+    public Conversation() {
+    	
+    }
+    
+    public void setId(UUID id)
+    {
+    	this.id = id;
+    }
     
     public UUID getId()
     {
