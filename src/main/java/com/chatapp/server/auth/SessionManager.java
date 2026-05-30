@@ -28,8 +28,8 @@ public class SessionManager {
 		{
 			String token = UUID.randomUUID().toString();
 			sessions.put(token, userId);
-			System.out.println("id = " + userId);
-			System.out.println("token = " + token);
+//			System.out.println("id = " + userId);
+//			System.out.println("token = " + token);
 			return token;
 		}
 		
