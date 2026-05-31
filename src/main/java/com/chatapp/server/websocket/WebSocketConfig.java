@@ -30,8 +30,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer{
 		registry.setApplicationDestinationPrefixes("/app");
 		registry.enableSimpleBroker("/topic");
 		
-	    registry.setUserDestinationPrefix("/user");
-	    registry.setPathMatcher(new AntPathMatcher());
+//	    registry.setUserDestinationPrefix("/user");
+//	    registry.setPathMatcher(new AntPathMatcher());
 	}
 	
 	@Bean

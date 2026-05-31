@@ -3,6 +3,8 @@ package com.chatapp.server.messages;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,12 +21,14 @@ public class Message {
 
     private UUID conversationId;
     private UUID senderId;
+    private String username;
 
     @Column(columnDefinition = "TEXT")
     private String content;
 
     private String messageType; // file, image etc
 
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
     
     public UUID getId()
@@ -50,6 +54,15 @@ public class Message {
     public void setSenderId(UUID uuid)
     {
     	senderId = uuid;
+    }
+    
+    public void setUsername(String username)
+    {
+    	this.username = username;
+    }
+    public String getUsername()
+    {
+    	return username;
     }
     
     public String getContent()

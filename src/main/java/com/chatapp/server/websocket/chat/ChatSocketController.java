@@ -7,6 +7,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import com.chatapp.server.auth.SessionManager;
 import com.chatapp.server.dto.MessageRequest;
@@ -21,14 +22,34 @@ public class ChatSocketController {
     @Autowired
     private MessageService messageService;
 	
-	@MessageMapping("/conversation/")
-	@SendTo("/topic/conversation/")
+	@MessageMapping("/conversation.send")
 	public void handleMessage(MessageRequest msg)
 	{
-        UUID senderId = SessionManager.getUserId(msg.token);
-        Message saved = messageService.sendMessage(msg.conversationId, senderId, msg.content, msg.type);
-
-        System.out.println("SEND TO = /topic/conversation/" + msg.conversationId);
-        messagingTemplate.convertAndSend("/topic/conversation/" + msg.conversationId, "TEEEEEST"); //This line is not working as intended...
+        UUID senderId = SessionManager.getUserId(msg.getToken());
+        Message saved = messageService.sendMessage(msg.getConversationId(), senderId, msg.getContent(), msg.getType());
+        System.out.println(saved.getContent());
+        System.out.println(senderId);
+        System.out.println(saved.getMessageType());
+        
+        
+        System.out.println("SEND TO = /topic/conversation/" + msg.getConversationId());
+        messagingTemplate.convertAndSend("/topic/conversation/" + msg.getConversationId(), saved);
 	}
+	
+	
+	
+//	@GetMapping("/test")
+//	public String test()
+//	{
+//		Message msg = new Message();
+//		msg.setContent("HELOOO");
+//		msg.setConversationId(null);
+//		msg.setSenderId(null);
+//		msg.setMessageType("TEXT");
+//	    System.out.println("SENDING TEST");
+//
+//	    messagingTemplate.convertAndSend("/topic/conversation", msg);
+//
+//	    return "ok";
+//	}
 }

@@ -29,10 +29,10 @@ public class MessageManager {
     @PostMapping("/send")
     public Message sendMessage(@RequestBody MessageRequest request) 
     {
-    	UUID senderId = SessionManager.getUserId(request.token);
+    	UUID senderId = SessionManager.getUserId(request.getToken());
     	if(senderId == null) return null;
     	
-        return messageService.sendMessage(request.conversationId, senderId, request.content, request.type);
+        return messageService.sendMessage(request.getConversationId(), senderId, request.getContent(), request.getType());
     }
     
     @GetMapping("/get")
