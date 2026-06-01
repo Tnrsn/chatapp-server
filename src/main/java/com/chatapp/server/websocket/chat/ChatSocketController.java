@@ -27,9 +27,11 @@ public class ChatSocketController {
 	{
         UUID senderId = SessionManager.getUserId(msg.getToken());
         Message saved = messageService.sendMessage(msg.getConversationId(), senderId, msg.getContent(), msg.getType());
-        System.out.println(saved.getContent());
-        System.out.println(senderId);
-        System.out.println(saved.getMessageType());
+        
+        if(saved == null) return;
+//        System.out.println(saved.getContent());
+//        System.out.println(senderId);
+//        System.out.println(saved.getMessageType());
         
         
         System.out.println("SEND TO = /topic/conversation/" + msg.getConversationId());

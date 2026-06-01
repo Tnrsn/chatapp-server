@@ -59,12 +59,16 @@ public class FriendshipService {
     public void acceptRequest(String userToken, UUID requesterId)
     {
     	UUID receiverId = SessionManager.getUserId(userToken);
+    	if(receiverId == null) return;
+    	
     	friendshipRepository.acceptFriendRequest(requesterId, receiverId);
     }
     
     public void declineRequest(String userToken, UUID requesterId)
     {
     	UUID receiverId = SessionManager.getUserId(userToken);
+    	if(receiverId == null) return;
+    	
     	friendshipRepository.declineFriendRequest(requesterId, receiverId);
     }
 }

@@ -24,6 +24,10 @@ public class MessageService {
         boolean isMember = memberRepository.existsByConversationIdAndUserId(conversationId, senderId);
         if (!isMember) return null;
         
+        if(content == null || content.trim().isEmpty()) return null;
+
+        content = content.trim();
+        
         Message msg = new Message();
         msg.setConversationId(conversationId);
         msg.setSenderId(senderId);
