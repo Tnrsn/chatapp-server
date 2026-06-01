@@ -8,16 +8,17 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import com.chatapp.server.auth.SessionManager;
+import com.chatapp.server.community.CommunityService;
 import com.chatapp.server.dto.MessageRequest;
 import com.chatapp.server.messages.Message;
 import com.chatapp.server.messages.MessageService;
 
-public class CommunityController {
+public class CommunitySocketController {
 	
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
     @Autowired
-    private MessageService messageService;
+    private CommunityService communityService;
 	
 //	@MessageMapping("/conversation.send")
 //	public void handleMessage(MessageRequest msg)
@@ -33,6 +34,11 @@ public class CommunityController {
 //        messagingTemplate.convertAndSend("/topic/conversation/" + msg.getConversationId(), saved);
 //	}
 	
+    @MessageMapping("/Community.send")
+    public void CreateCommunity()
+    {
+    	
+    }
 	
 	
 //		@GetMapping("/test")

@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,24 +32,14 @@ public class ChatSocketController {
 //        System.out.println(senderId);
 //        System.out.println(saved.getMessageType());
         
-        
         System.out.println("SEND TO = /topic/conversation/" + msg.getConversationId());
         messagingTemplate.convertAndSend("/topic/conversation/" + msg.getConversationId(), saved);
 	}
 	
-	
-	
 //	@GetMapping("/test")
 //	public String test()
 //	{
-//		Message msg = new Message();
-//		msg.setContent("HELOOO");
-//		msg.setConversationId(null);
-//		msg.setSenderId(null);
-//		msg.setMessageType("TEXT");
-//	    System.out.println("SENDING TEST");
-//
-//	    messagingTemplate.convertAndSend("/topic/conversation", msg);
+//		System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAA");
 //
 //	    return "ok";
 //	}

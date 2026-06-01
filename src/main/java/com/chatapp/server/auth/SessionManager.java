@@ -39,7 +39,8 @@ public class SessionManager {
 			return sessions.containsKey(token);
 		}
 		
-		public static UUID getUserId(String token) 
+		@GetMapping("/getid")
+		public static UUID getUserId(@RequestParam String token) 
 		{
 			return sessions.get(token);
 		}

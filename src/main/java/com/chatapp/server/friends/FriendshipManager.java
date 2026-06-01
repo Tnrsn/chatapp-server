@@ -30,7 +30,7 @@ public class FriendshipManager {
 	}
 	
 	@PostMapping("/accept")
-	public void acceptRequest(@RequestParam String token, @RequestParam UUID requesterId)
+	public void acceptRequest(@RequestParam String token, @RequestParam String requesterId)
 	{
 		friendshipService.acceptRequest(token, requesterId);
 	}
@@ -45,5 +45,15 @@ public class FriendshipManager {
 	public List<User> getFriends(@RequestParam String token)
 	{
 		return friendshipService.getFriends(token);
+	}
+	
+	@GetMapping("/test")
+	public String test()
+	{
+		System.out.println("f754fab2-3043-43e6-9223-051d8f203f51");
+		String id = "f754fab2-3043-43e6-9223-051d8f203f51";
+		
+		friendshipService.acceptRequest(id, id);
+	    return "ok :)";
 	}
 }

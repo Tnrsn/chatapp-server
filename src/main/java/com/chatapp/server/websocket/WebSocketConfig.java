@@ -43,7 +43,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer{
 	}
 	
 	@Bean
-	public ApplicationListener<SessionUnsubscribeEvent> unsubscribeListener() {
+	public ApplicationListener<SessionUnsubscribeEvent> unsubscribeListener() 
+	{
 	    return event -> {
 	        System.out.println("UNSUBSCRIBE EVENT: " + event);
 	    };

@@ -30,6 +30,11 @@ public class AuthController {
 
     	System.out.println("Register");
     	
+    	if (req.email == null || req.username == null || req.password == null ||   req.email.isBlank() || req.username.isBlank() || req.password.isBlank())
+    	{
+    		return null;
+		}
+    		
         User user = new User();
         user.setUsername(req.username);
         user.setEmail(req.email);
