@@ -32,27 +32,56 @@ public class ConversationService {
         }
         //otherwise it creates a new direct conversation.
         Conversation convo = new Conversation();
-        convo.setType("direct");
+        convo.setType("direct"); //I'll make convo types ENUM later
         convo.setCreatedBy(user1);
         convo.setCreatedAt(LocalDateTime.now());
 
         Conversation saved = conversationRepository.save(convo);
-        ConversationMember m1 = new ConversationMember();
         
-        m1.setConversationId(saved.getId());
-        m1.setUserId(user1);
-        m1.setJoinedAt(LocalDateTime.now());
-
-        ConversationMember m2 = new ConversationMember();
-        m2.setConversationId(saved.getId());
-        m2.setUserId(user2);
-        m2.setJoinedAt(LocalDateTime.now());
-
-        memberRepository.save(m1);
-        memberRepository.save(m2);
+        addConversationMember(user1, saved.getId());
+        addConversationMember(user2, saved.getId());
+//        ConversationMember m1 = new ConversationMember();
+//        
+//        m1.setConversationId(saved.getId());
+//        m1.setUserId(user1);
+//        m1.setJoinedAt(LocalDateTime.now());
+//
+//        ConversationMember m2 = new ConversationMember();
+//        m2.setConversationId(saved.getId());
+//        m2.setUserId(user2);
+//        m2.setJoinedAt(LocalDateTime.now());
+//
+//        memberRepository.save(m1);
+//        memberRepository.save(m2);
 
         return saved;
     }
+	
+	@Transactional
+	public Conversation createCommunityConversation(UUID ownerId)
+	{
+		Conversation convo = new Conversation();
+		
+		convo.setType("community");
+		convo.setCreatedBy(ownerId);
+		convo.setCreatedAt(LocalDateTime.now());
+		
+		Conversation saved = conversationRepository.save(convo);
+		return saved;
+	}
+	
+	@Transactional
+	public void addConversationMember(UUID member, UUID convoId)
+	{
+		if(memberRepository.existsByConversationIdAndUserId(convoId, member)) return;
+		
+        ConversationMember m = new ConversationMember();
+        m.setConversationId(convoId);
+        m.setUserId(member);
+        m.setJoinedAt(LocalDateTime.now());
+
+        memberRepository.save(m);
+	}
     
     public List<Conversation> getUserConversations(UUID userId) 
     {
