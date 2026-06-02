@@ -26,9 +26,18 @@ public class ConversationManager {
     public Conversation createDM(@RequestParam String token, @RequestParam UUID user2)
     {
     	UUID user1 = SessionManager.getUserId(token);
-    	if(user1 == null || user1 == user2) return null;
+    	if(user1 == null || user1.equals(user2)) return null;
     	
         return conversationService.createDirectConversation(user1, user2);
+    }
+    
+    @PostMapping("/community")
+    public Conversation openCommunityConversation(@RequestParam String token, @RequestParam UUID communityId)
+    {
+    	UUID user1 = SessionManager.getUserId(token);
+    	if(user1 == null || user1.equals(communityId)) return null;
+    	
+        return conversationService.openCommunityConversation(communityId);
     }
     
     @GetMapping("/list") //I can use here if I ever decide to make a messages list

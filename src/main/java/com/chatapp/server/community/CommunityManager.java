@@ -1,5 +1,8 @@
 package com.chatapp.server.community;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.chatapp.server.dto.CommunityRequest;
+import com.chatapp.server.user.User;
 
 @RestController
 @RequestMapping("/community")
@@ -24,4 +28,10 @@ public class CommunityManager {
     {
         service.CreateCommunity(token, request);
     }
+    
+	@GetMapping("/getlist")
+	public List<Community> getCommunityListOfUser(@RequestParam String token)
+	{
+		return service.getCommunityListOfUser(token);
+	}
 }

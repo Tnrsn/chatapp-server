@@ -15,40 +15,46 @@ import com.chatapp.server.community.tag.Tag;
 import com.chatapp.server.community.tag.TagRepository;
 import com.chatapp.server.conversation.CommunityCreatedEvent;
 import com.chatapp.server.conversation.Conversation;
+import com.chatapp.server.conversation.ConversationMember;
+import com.chatapp.server.conversation.ConversationMemberRepository;
 import com.chatapp.server.conversation.ConversationService;
 import com.chatapp.server.dto.CommunityRequest;
+import com.chatapp.server.user.User;
+import com.chatapp.server.websocket.WebSocketPing;
 
 @Service
 public class CommunityService {
 
-    private final CommunityRepository repo;
+    private final CommunityRepository communityRepository;
     private final ConversationService conversationService;
     private final CommunityTagRepository communityTagRepository;
     private final TagRepository tagRepository;
+    private final ConversationMemberRepository memberRepository;
     
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    public CommunityService(CommunityRepository repo, ConversationService conversationService, 
-    		CommunityTagRepository communityTagRepository, TagRepository tagRepository)
+    public CommunityService(CommunityRepository communityRepository, ConversationService conversationService, 
+    		CommunityTagRepository communityTagRepository, TagRepository tagRepository, ConversationMemberRepository memberRepository)
     {
-        this.repo = repo;
+        this.communityRepository = communityRepository;
         this.conversationService = conversationService;
         this.communityTagRepository = communityTagRepository;
         this.tagRepository = tagRepository;
+        this.memberRepository = memberRepository;
     }
 	
 	public Community CreateCommunity(String token, CommunityRequest request)
 	{
-		System.out.println("OwnerId; " + SessionManager.getUserId(token));
-		System.out.println("Server name; " + request.getName()); //Delete this line later after debug
+//		System.out.println("OwnerId; " + SessionManager.getUserId(token));
+//		System.out.println("Server name; " + request.getName()); //Delete this line later after debug
 		UUID ownerId = SessionManager.getUserId(token);
 		
 		if(ownerId == null) return null;
 	    if(request == null) return null; //Just in case
 	    if(request.getName() == null || request.getName().isBlank()) return null;
 	    if(request.getTags().size() > 3) return null;
-	    if(repo.existsByNameIgnoreCase(request.getName().trim())) return null; //Checks if a community with that name already exists
+	    if(communityRepository.existsByNameIgnoreCase(request.getName().trim())) return null; //Checks if a community with that name already exists
 	    
 	    
 	    Conversation conversation = conversationService.createCommunityConversation(ownerId);
@@ -61,11 +67,11 @@ public class CommunityService {
 	    community.setConversationId(conversation.getId());
 	    community.setCreatedAt(LocalDateTime.now());
 	    community.setUpdatedAt(LocalDateTime.now());
-	    community = repo.save(community);
+	    community = communityRepository.save(community);
 	    
 	    
 	    for (String rawTag : request.getTags()) {
-	    	System.out.print("Tag: " + rawTag);
+//	    	System.out.print("Tag: " + rawTag);
 	        String tag = rawTag.trim().toLowerCase();
 	        if (tag.isBlank()) continue;
 
@@ -87,12 +93,24 @@ public class CommunityService {
 	    
 	    conversationService.addConversationMember(ownerId, conversation.getId());
 	    
-	    CommunityCreatedEvent event = new CommunityCreatedEvent(community.getId(), community.getConversationId(), community.getName(),
-	    		community.getDescription(), community.isPublic(), tags);
+//	    CommunityCreatedEvent event = new CommunityCreatedEvent(community.getId(), community.getConversationId(), community.getName(),
+//	    		community.getDescription(), community.isPublic(), tags);
 	    
-	    messagingTemplate.convertAndSendToUser(ownerId.toString(), "/queue/updates", event);
+	    WebSocketPing ping = new WebSocketPing();
+	    ping.setStatus(true);
+	    
+//	    System.out.println("/topic/community/created/" + ownerId);
+	    messagingTemplate.convertAndSend("/topic/community/created/" + ownerId, ping);
 	    
 	    return community;
+	}
+
+	public List<Community> getCommunityListOfUser(String token) 
+	{
+		UUID userId = SessionManager.getUserId(token);
+	    if(userId == null) return null;
+		
+		return communityRepository.findCommunitiesByUserId(userId);
 	}
 	
 }

@@ -8,16 +8,22 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.chatapp.server.community.Community;
+import com.chatapp.server.community.CommunityRepository;
+
 @Service
 public class ConversationService {
 
 	private final ConversationRepository conversationRepository;
 	private final ConversationMemberRepository memberRepository;
+	private final CommunityRepository communityRepository;
 	
-	public ConversationService(ConversationRepository conversationRepository, ConversationMemberRepository memberRepository)
+	public ConversationService(ConversationRepository conversationRepository, ConversationMemberRepository memberRepository,
+			CommunityRepository communityRepository)
 	{
 		this.conversationRepository = conversationRepository;
 		this.memberRepository = memberRepository;
+		this.communityRepository = communityRepository;
 	}
 	
 	@Transactional
@@ -40,19 +46,6 @@ public class ConversationService {
         
         addConversationMember(user1, saved.getId());
         addConversationMember(user2, saved.getId());
-//        ConversationMember m1 = new ConversationMember();
-//        
-//        m1.setConversationId(saved.getId());
-//        m1.setUserId(user1);
-//        m1.setJoinedAt(LocalDateTime.now());
-//
-//        ConversationMember m2 = new ConversationMember();
-//        m2.setConversationId(saved.getId());
-//        m2.setUserId(user2);
-//        m2.setJoinedAt(LocalDateTime.now());
-//
-//        memberRepository.save(m1);
-//        memberRepository.save(m2);
 
         return saved;
     }
@@ -68,6 +61,16 @@ public class ConversationService {
 		
 		Conversation saved = conversationRepository.save(convo);
 		return saved;
+	}
+	
+	@Transactional
+	public Conversation openCommunityConversation(UUID communityId)
+	{
+	    Community community = communityRepository.findById(communityId).orElse(null);
+
+	    if (community == null) return null;
+
+	    return conversationRepository.findById(community.getConversationId()).orElse(null);
 	}
 	
 	@Transactional
