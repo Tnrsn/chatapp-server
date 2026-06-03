@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.chatapp.server.auth.SessionManager;
+import com.chatapp.server.community.Community;
+import com.chatapp.server.community.CommunityService;
 import com.chatapp.server.friendships.FriendshipService;
 import com.chatapp.server.user.User;
 import com.chatapp.server.user.UserService;
@@ -19,10 +21,12 @@ public class SearchManager {
 
 	private final UserService userService;
 	private final FriendshipService friendshipService;
+	private final CommunityService communityService;
 	
-    public SearchManager(UserService userService, FriendshipService friendshipService) {
+    public SearchManager(UserService userService, FriendshipService friendshipService, CommunityService communityService) {
         this.userService = userService;
         this.friendshipService = friendshipService;
+        this.communityService = communityService;
     }
     
 	@GetMapping("/people")
@@ -37,5 +41,12 @@ public class SearchManager {
 	{
 	    UUID userId = SessionManager.getUserId(token);
 	    return friendshipService.getPendingRequests(userId);
+	}
+	
+	@GetMapping("/community")
+	public List<Community> searchCommunity(@RequestParam String search)
+	{
+		List<Community> communities = communityService.searchCommunities(search);
+		return communities;
 	}
 }

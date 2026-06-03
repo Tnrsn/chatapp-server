@@ -112,5 +112,12 @@ public class CommunityService {
 		
 		return communityRepository.findCommunitiesByUserId(userId);
 	}
+
+	public List<Community> searchCommunities(String search) 
+	{
+	    if(search == null || search.isBlank()) return List.of();
+
+	    return communityRepository.searchByNameOrTag(search.trim());
+	}
 	
 }
