@@ -1,6 +1,7 @@
 package com.chatapp.server.community;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,6 +14,7 @@ import com.chatapp.server.community.tag.CommunityTag;
 import com.chatapp.server.community.tag.CommunityTagRepository;
 import com.chatapp.server.community.tag.Tag;
 import com.chatapp.server.community.tag.TagRepository;
+import com.chatapp.server.community.tag.TagService;
 import com.chatapp.server.conversation.CommunityCreatedEvent;
 import com.chatapp.server.conversation.Conversation;
 import com.chatapp.server.conversation.ConversationMember;
@@ -30,18 +32,21 @@ public class CommunityService {
     private final CommunityTagRepository communityTagRepository;
     private final TagRepository tagRepository;
     private final ConversationMemberRepository memberRepository;
+    private final TagService tagService;
     
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
     public CommunityService(CommunityRepository communityRepository, ConversationService conversationService, 
-    		CommunityTagRepository communityTagRepository, TagRepository tagRepository, ConversationMemberRepository memberRepository)
+    		CommunityTagRepository communityTagRepository, TagRepository tagRepository, ConversationMemberRepository memberRepository,
+    		TagService tagService)
     {
         this.communityRepository = communityRepository;
         this.conversationService = conversationService;
         this.communityTagRepository = communityTagRepository;
         this.tagRepository = tagRepository;
         this.memberRepository = memberRepository;
+        this.tagService = tagService;
     }
 	
 	public Community CreateCommunity(String token, CommunityRequest request)
@@ -113,11 +118,19 @@ public class CommunityService {
 		return communityRepository.findCommunitiesByUserId(userId);
 	}
 
-	public List<Community> searchCommunities(String search) 
+	public List<CommunitySearchResults> searchCommunities(String search) 
 	{
 	    if(search == null || search.isBlank()) return List.of();
+	    List<Community> communities = communityRepository.searchByNameOrTag(search.trim());
+	    List<CommunitySearchResults> searchResult = new ArrayList<>();
+	    for(Community community : communities)
+	    {
+	        List<String> tags = tagService.getTagNamesByCommunityId(community.getId());
 
-	    return communityRepository.searchByNameOrTag(search.trim());
+	        searchResult.add(new CommunitySearchResults(community, tags));
+	    }
+	    
+	    return searchResult; 
 	}
 	
 }

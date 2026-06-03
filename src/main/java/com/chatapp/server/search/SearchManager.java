@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.chatapp.server.auth.SessionManager;
 import com.chatapp.server.community.Community;
+import com.chatapp.server.community.CommunitySearchResults;
 import com.chatapp.server.community.CommunityService;
 import com.chatapp.server.friendships.FriendshipService;
 import com.chatapp.server.user.User;
@@ -44,9 +45,9 @@ public class SearchManager {
 	}
 	
 	@GetMapping("/community")
-	public List<Community> searchCommunity(@RequestParam String search)
+	public List<CommunitySearchResults> searchCommunity(@RequestParam String search)
 	{
-		List<Community> communities = communityService.searchCommunities(search);
+		List<CommunitySearchResults> communities = communityService.searchCommunities(search);
 		return communities;
 	}
 }
