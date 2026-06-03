@@ -1,6 +1,7 @@
 package com.chatapp.server.community;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,5 +34,11 @@ public class CommunityManager {
 	public List<Community> getCommunityListOfUser(@RequestParam String token)
 	{
 		return service.getCommunityListOfUser(token);
+	}
+	
+	@PostMapping("/join")
+	public boolean joinCommunity(@RequestParam String token, @RequestBody UUID communityId)
+	{
+		return service.joinCommunity(communityId, token);
 	}
 }

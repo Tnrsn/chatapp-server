@@ -105,7 +105,7 @@ public class CommunityService {
 	    ping.setStatus(true);
 	    
 //	    System.out.println("/topic/community/created/" + ownerId);
-	    messagingTemplate.convertAndSend("/topic/community/created/" + ownerId, ping);
+	    messagingTemplate.convertAndSend("/topic/community/refresh/" + ownerId, ping);
 	    
 	    return community;
 	}
@@ -131,6 +131,25 @@ public class CommunityService {
 	    }
 	    
 	    return searchResult; 
+	}
+	
+	public boolean joinCommunity(UUID communityId, String token)
+	{
+	    UUID userId = SessionManager.getUserId(token);
+	    Community community = communityRepository.findById(communityId).orElse(null);
+
+	    if(userId == null || community == null) return false;
+
+	    //if already joined
+	    if(memberRepository.existsByConversationIdAndUserId(community.getConversationId(),userId)) return true;
+	    
+	    memberRepository.save(new ConversationMember(community.getConversationId(),userId, LocalDateTime.now()));
+	    
+	    WebSocketPing ping = new WebSocketPing();
+	    ping.setStatus(true);
+	    messagingTemplate.convertAndSend("/topic/community/refresh/" + userId, ping);
+
+	    return true;
 	}
 	
 }

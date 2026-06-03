@@ -19,6 +19,14 @@ public class ConversationMember {
     private UUID userId;
     private LocalDateTime joinedAt;
     
+    public ConversationMember() {}
+    public ConversationMember(UUID conversationId, UUID userId, LocalDateTime joinedAt)
+    {
+    	this.conversationId = conversationId;
+    	this.userId = userId;
+    	this.joinedAt = joinedAt;
+    }
+    
     public UUID getId()
     {
     	return id;
