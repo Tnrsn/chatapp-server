@@ -3,6 +3,7 @@ package com.chatapp.server.community;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ import com.chatapp.server.user.User;
 import com.chatapp.server.user.UserRepository;
 import com.chatapp.server.websocket.WebSocketPing;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class CommunityService {
 
@@ -34,6 +37,7 @@ public class CommunityService {
     private final CommunityTagRepository communityTagRepository;
     private final TagRepository tagRepository;
     private final ConversationMemberRepository memberRepository;
+    private final ConversationRepository conversationRepository;
     private final TagService tagService;
     private final UserRepository userRepository;
     
@@ -42,7 +46,7 @@ public class CommunityService {
 
     public CommunityService(CommunityRepository communityRepository, ConversationService conversationService, 
     		CommunityTagRepository communityTagRepository, TagRepository tagRepository, ConversationMemberRepository memberRepository,
-    		TagService tagService, UserRepository userRepository)
+    		TagService tagService, UserRepository userRepository, ConversationRepository conversationRepository)
     {
         this.communityRepository = communityRepository;
         this.conversationService = conversationService;
@@ -51,6 +55,7 @@ public class CommunityService {
         this.memberRepository = memberRepository;
         this.tagService = tagService;
         this.userRepository = userRepository;
+        this.conversationRepository = conversationRepository;
     }
 	
 	public Community CreateCommunity(String token, CommunityRequest request)
@@ -176,6 +181,33 @@ public class CommunityService {
 	            .toList();
 	    
 	    return new CommunityInfo(info, members);
+	}
+
+	@Transactional
+	public boolean quitCommunity(String token, UUID conversationId)
+	{
+	    UUID userId = SessionManager.getUserId(token);
+
+	    if(userId == null) return false;
+
+	    Optional<Conversation> conversationOpt = conversationRepository.findById(conversationId);
+
+	    if(conversationOpt.isEmpty()) return false;
+
+	    Conversation conversation = conversationOpt.get();
+
+	    if(conversation.getCreatedBy().equals(userId)) //Disband community if owner leaves
+	    {
+	    	System.out.print("Disband the community");
+	        memberRepository.deleteByConversationId(conversationId);
+	        communityRepository.deleteByConversationId(conversationId);
+	        conversationRepository.delete(conversation);
+	        return true;
+	    }
+	    
+	    System.out.print("Left the community");
+	    int deleted = memberRepository.leaveConversation(conversationId, userId);
+	    return deleted > 0;
 	}
 	
 }

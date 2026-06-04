@@ -47,4 +47,10 @@ public class CommunityManager {
 	{
 	    return service.getCommunityInfo(token, communityId);
 	}
+	
+	@PostMapping("/leave")
+	public boolean leaveCommunity(@RequestParam String token, @RequestBody UUID conversationId)
+	{
+		return service.quitCommunity(token, conversationId);
+	}
 }

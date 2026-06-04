@@ -39,6 +39,11 @@ public class Conversation {
     	this.type = type;
     }
     
+    public UUID getCreatedBy()
+    {
+    	return createdBy;
+    }
+    
     public void setCreatedBy(UUID userId)
     {
     	createdBy = userId;
