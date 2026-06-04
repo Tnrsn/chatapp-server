@@ -25,9 +25,9 @@ public class CommunityManager {
     }
     
     @PostMapping("/create")
-    public void createCommunity(@RequestParam String token, @RequestBody CommunityRequest request) 
+    public Community createCommunity(@RequestParam String token, @RequestBody CommunityRequest request) 
     {
-        service.CreateCommunity(token, request);
+        return service.CreateCommunity(token, request);
     }
     
 	@GetMapping("/getlist")
