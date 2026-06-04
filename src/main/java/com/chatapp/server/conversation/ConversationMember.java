@@ -23,8 +23,8 @@ public class ConversationMember {
     public ConversationMember(UUID conversationId, UUID userId, LocalDateTime joinedAt)
     {
     	this.conversationId = conversationId;
-    	this.userId = userId;
-    	this.joinedAt = joinedAt;
+    	this.setUserId(userId);
+    	this.setJoinedAt(joinedAt);
     }
     
     public UUID getId()
@@ -46,14 +46,17 @@ public class ConversationMember {
     {
     	return conversationId;
     }
-    
-    public void setUserId(UUID uuid)
-    {
-    	userId = uuid;
-    }
-    
-    public void setJoinedAt(LocalDateTime date)
-    {
-    	joinedAt = date;
-    }
+   
+	public UUID getUserId() {
+		return userId;
+	}
+	public void setUserId(UUID userId) {
+		this.userId = userId;
+	}
+	public LocalDateTime getJoinedAt() {
+		return joinedAt;
+	}
+	public void setJoinedAt(LocalDateTime joinedAt) {
+		this.joinedAt = joinedAt;
+	}
 }

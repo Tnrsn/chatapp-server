@@ -19,9 +19,11 @@ import com.chatapp.server.conversation.CommunityCreatedEvent;
 import com.chatapp.server.conversation.Conversation;
 import com.chatapp.server.conversation.ConversationMember;
 import com.chatapp.server.conversation.ConversationMemberRepository;
+import com.chatapp.server.conversation.ConversationRepository;
 import com.chatapp.server.conversation.ConversationService;
 import com.chatapp.server.dto.CommunityRequest;
 import com.chatapp.server.user.User;
+import com.chatapp.server.user.UserRepository;
 import com.chatapp.server.websocket.WebSocketPing;
 
 @Service
@@ -33,13 +35,14 @@ public class CommunityService {
     private final TagRepository tagRepository;
     private final ConversationMemberRepository memberRepository;
     private final TagService tagService;
+    private final UserRepository userRepository;
     
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
     public CommunityService(CommunityRepository communityRepository, ConversationService conversationService, 
     		CommunityTagRepository communityTagRepository, TagRepository tagRepository, ConversationMemberRepository memberRepository,
-    		TagService tagService)
+    		TagService tagService, UserRepository userRepository)
     {
         this.communityRepository = communityRepository;
         this.conversationService = conversationService;
@@ -47,6 +50,7 @@ public class CommunityService {
         this.tagRepository = tagRepository;
         this.memberRepository = memberRepository;
         this.tagService = tagService;
+        this.userRepository = userRepository;
     }
 	
 	public Community CreateCommunity(String token, CommunityRequest request)
@@ -150,6 +154,28 @@ public class CommunityService {
 	    messagingTemplate.convertAndSend("/topic/community/refresh/" + userId, ping);
 
 	    return true;
+	}
+
+	public CommunityInfo getCommunityInfo(String token, UUID communityId) {
+	    if (SessionManager.getUserId(token) == null) throw new RuntimeException("Invalid token");
+
+	    Community community = communityRepository.findById(communityId).orElseThrow(() -> new RuntimeException("Community not found"));
+	    List<String> tags = tagService.getTagNamesByCommunityId(communityId);
+	    CommunitySearchResults info = new CommunitySearchResults(community, tags);
+	    
+	    UUID conversationId = communityRepository.findById(communityId)
+	            .orElseThrow(() -> new RuntimeException("Community not found"))
+	            .getConversationId();
+
+	    List<User> members = memberRepository
+	            .findByConversationId(conversationId)
+	            .stream()
+	            .map(ConversationMember::getUserId)
+	            .map(userRepository::findById)
+	            .map(opt -> opt.orElseThrow(() -> new RuntimeException("User not found")))
+	            .toList();
+	    
+	    return new CommunityInfo(info, members);
 	}
 	
 }

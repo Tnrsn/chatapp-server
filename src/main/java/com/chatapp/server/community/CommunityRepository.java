@@ -1,6 +1,7 @@
 package com.chatapp.server.community;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,4 +34,6 @@ public interface CommunityRepository extends JpaRepository<Community, UUID> {
                OR LOWER(t.name) LIKE LOWER(CONCAT('%', :search, '%'))
         """)
         List<Community> searchByNameOrTag(@Param("search") String search);
+
+//    Optional<Community> findById(UUID id);
 }

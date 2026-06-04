@@ -41,4 +41,10 @@ public class CommunityManager {
 	{
 		return service.joinCommunity(communityId, token);
 	}
+	
+	@GetMapping("/getinfo")
+	public CommunityInfo getInfo(@RequestParam String token, @RequestParam UUID communityId)
+	{
+	    return service.getCommunityInfo(token, communityId);
+	}
 }
