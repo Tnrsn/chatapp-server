@@ -194,18 +194,29 @@ public class CommunityService {
 
 	    if(conversationOpt.isEmpty()) return false;
 
+	    WebSocketPing ping = new WebSocketPing();
+	    ping.setStatus(true);
+	    
 	    Conversation conversation = conversationOpt.get();
 
 	    if(conversation.getCreatedBy().equals(userId)) //Disband community if owner leaves
 	    {
-	    	System.out.print("Disband the community");
+	    	List<UUID> memberIds = memberRepository.getMembers(conversationId);
+	    	
+	    	for(UUID memberId : memberIds)
+	    	{
+	    		System.out.println("bbb === " + memberId);
+	    		messagingTemplate.convertAndSend("/topic/community/refresh/" + memberId, ping);
+	    	}
+		   
 	        memberRepository.deleteByConversationId(conversationId);
 	        communityRepository.deleteByConversationId(conversationId);
 	        conversationRepository.delete(conversation);
+	        
 	        return true;
 	    }
 	    
-	    System.out.print("Left the community");
+	    messagingTemplate.convertAndSend("/topic/community/refresh/" + userId, ping);
 	    int deleted = memberRepository.leaveConversation(conversationId, userId);
 	    return deleted > 0;
 	}

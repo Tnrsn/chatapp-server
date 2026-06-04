@@ -28,4 +28,11 @@ public interface ConversationMemberRepository extends JpaRepository<Conversation
     WHERE cm.conversationId = :conversationId
     """)
     void deleteByConversationId(UUID conversationId);
+    
+    @Query("""
+	Select userId FROM ConversationMember cm
+	Where cm.conversationId = :conversationId
+	""")
+    List<UUID> getMembers(UUID conversationId);
+
 }
